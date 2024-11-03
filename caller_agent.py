@@ -7,12 +7,12 @@ from langgraph.prebuilt import ToolNode
 from langchain_core.messages import HumanMessage
 import os
 
-CONVERSATION = []
+conversations = {}
 
 def get_llm(api_key: str):
     """Initialize and return the LLM with the provided API key"""
     return ChatOpenAI(
-        model='gpt-4o-mini',
+        model='gpt-3.5-turbo',
         openai_api_key=api_key
     )
 
@@ -72,17 +72,29 @@ def setup_workflow(llm):
     caller_workflow.set_entry_point("agent")
     return caller_workflow.compile()
 
-def receive_message_from_caller(message: str, api_key: str):
+def receive_message_from_caller(message: str, api_key: str, session_id: str):
     """Process a message from the caller using the provided API key"""
+    # Initialize conversation for new sessions
+    if session_id not in conversations:
+        conversations[session_id] = []
+    
     llm = get_llm(api_key)
-    CONVERSATION.append(HumanMessage(content=message, type="human"))
+    conversations[session_id].append(HumanMessage(content=message, type="human"))
     
     # Create a new workflow instance with the current LLM
     caller_app = setup_workflow(llm)
     
     state = {
-        "messages": CONVERSATION,
+        "messages": conversations[session_id],
     }
     print(state)
     new_state = caller_app.invoke(state)
-    CONVERSATION.extend(new_state["messages"][len(CONVERSATION):])
+    conversations[session_id].extend(new_state["messages"][len(conversations[session_id]):])
+    
+    # Return the conversation history for this session
+    return conversations[session_id]
+
+def reset_conversation(session_id: str):
+    """Reset the conversation for a specific session"""
+    if session_id in conversations:
+        conversations[session_id] = []
