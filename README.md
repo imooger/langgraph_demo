@@ -1,6 +1,6 @@
 # LangGraph Tutorial
 
-This is a LangGraph demo to to create an assistant bot that can book and cancel appointments.
+This is a LangGraph demo to create an assistant bot that can book and cancel appointments.
 
 To run the code here you will need to install the packages listed in the requirements.txt:
 
