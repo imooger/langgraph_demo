@@ -1,5 +1,6 @@
 from langchain_core.tools import tool
 import datetime
+import json
 
 
 APPOINTMENTS = []
