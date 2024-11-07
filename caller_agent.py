@@ -6,6 +6,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import HumanMessage
 import os
+import json
 
 conversations = {}
 
